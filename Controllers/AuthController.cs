@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PotholeDetectionApi.Dto;
+using PotholeDetectionApi.Service;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 
 namespace PotholeDetectionApi.Controllers
 {
@@ -15,11 +17,14 @@ namespace PotholeDetectionApi.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly EmailService _emailService;
 
-        public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, 
+            EmailService emailService)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -47,6 +52,79 @@ namespace PotholeDetectionApi.Controllers
             return Unauthorized("Invalid credentials");
         }
 
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(forgotPasswordDto.Email);
+            if (user == null)
+            {
+                return NotFound("User with this email does not exist");
+            }
+
+            if (_emailService == null)
+            {
+                return StatusCode(500, "Email service not available.");
+            }
+
+            try
+            {
+                _emailService.GenerateAndStoreOtp(forgotPasswordDto.Email);
+
+                return Ok( "OTP đã được gửi đến email của bạn");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi gửi email: {ex.Message}" +$"{ex.StackTrace}");
+            }
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto request)
+        {
+            // Kiểm tra tính hợp lệ của OTP
+            bool isValid = await Task.Run(() => _emailService.VerifyOtp(request.Email, request.Otp));
+
+            if (isValid)
+            {
+                return Ok(new { Message = "OTP verified successfully." });
+            }
+
+            return BadRequest("Invalid OTP or OTP has expired.");
+        }
+
+        [HttpGet("get-otp")]
+        public IActionResult GetOtpList()
+        {
+            var otpList = _emailService.GetOtpStore(); // Gọi phương thức lấy danh sách OTP
+
+            if (otpList == null || !otpList.Any())
+            {
+                return NotFound("No OTPs found.");
+            }
+
+            return Ok(otpList);
+        }
+
+        /*[HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            if (user == null)
+            {
+                return NotFound("User with this email does not exist");
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, resetPasswordDto.NewPassword);
+            if (result.Succeeded)
+            {
+                return Ok("Password has been reset successfully");
+            }
+
+            return BadRequest(result.Errors);
+        }*/
+
+
+
         private string GenerateJwtToken(IdentityUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -66,5 +144,6 @@ namespace PotholeDetectionApi.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
     }
 }
