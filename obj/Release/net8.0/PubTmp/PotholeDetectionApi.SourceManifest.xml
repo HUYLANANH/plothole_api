@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sitemanifest>
+  <IisApp path="D:\code\hoc lap trinh c#\PotholeDetectionApi\PotholeDetectionApi\obj\Release\net8.0\PubTmp\Out\" />
+  <dbfullsql path="D:\code\hoc lap trinh c#\PotholeDetectionApi\PotholeDetectionApi\obj\Release\net8.0\PubTmp\EFSQLScripts\PotholeDetectionApi.Data.DataContext.sql" />
+</sitemanifest>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAfa69LAks1kedmQjFGWP6hgAAAAACAAAAAAAQZgAAAAEAACAAAADbCpABC6DZ76aPo8gncwIZAOD2Xkv899kKyQfxZ7uMYgAAAAAOgAAAAAIAACAAAAAMTyWyJbWTCZfNfjJFOC9M8RsK787CbA3RXs0383sgj4AAAAApJ2f9hZW9nGwnKQVql0KWHF7N21+Cgs18unvl2y3P5Hv4I07tTXEhoESYkSJy5KlNBFGyJqJRXhOuaM5Jzi17AFjk3FZQ9iPaJVL6LP3ca+OxVAemdY40ZLpNLdwiyGbLn0XbdnE2Ns8Wt1PAJ1FvjsZSANbH6G/uUCB4qbguLEAAAABPOqBvIlljbWDDq3XNi5FWksSrntDuC9rbHJu+L7Y9r8IIr3H+xRmijXfqvOIHky7zE2ZUHApQeufO5SfgHa+J</EncryptedPassword>
+    <History>True|2024-11-18T15:50:14.1049205Z||;True|2024-11-18T22:46:59.6007783+07:00||;True|2024-11-18T22:36:21.3896654+07:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <EFMigrations Include="PotholeDetectionApi.Data.DataContext">
+      <Value>Data Source=potholedetectionapidbserver.database.windows.net,1433%3bInitial Catalog=PotholeDetectionApi_db%3bUser ID=huy%3bPassword=Lananh12%40</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

@@ -60,7 +60,7 @@ namespace PotholeDetectionApi.Controllers
                                 TileRow = reader.GetInt32(2)
                             });
                         }
-                        return Ok(new { tilesInfo });
+                        return Ok(tilesInfo );
                     }
                 }
             }

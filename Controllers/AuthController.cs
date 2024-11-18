@@ -70,7 +70,7 @@ namespace PotholeDetectionApi.Controllers
             {
                 _emailService.GenerateAndStoreOtp(forgotPasswordDto.Email);
 
-                return Ok( "OTP đã được gửi đến email của bạn");
+                return Ok(new { Message = "OTP đã được gửi đến email của bạn" });
             }
             catch (Exception ex)
             {
@@ -88,11 +88,12 @@ namespace PotholeDetectionApi.Controllers
             {
                 var user = await _userManager.FindByEmailAsync(request.Email);
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                return Ok(token);
+                return Ok(new { message = "OTP verified successfully", token = token });
             }
 
-            return BadRequest("Invalid OTP or OTP has expired.");
+            return BadRequest(new { message = "Invalid OTP or OTP has expired." });
         }
+
 
         [HttpGet("get-otp")]
         public IActionResult GetOtpList()
@@ -113,16 +114,33 @@ namespace PotholeDetectionApi.Controllers
             var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
             if (user == null)
             {
-                return NotFound("User with this email does not exist");
+                return NotFound(new { message = "User with this email does not exist" });
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Code, resetPasswordDto.NewPassword);
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
             if (result.Succeeded)
             {
-                return Ok("Password has been reset successfully");
+                return Ok(new { message = "Đổi mật khẩu thành công" });
             }
 
-            return BadRequest(result.Errors);
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new { message = "Đổi mật khẩu thất bại", errors = errors });
+        }
+
+        [HttpGet("users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            // Lấy toàn bộ người dùng từ UserManager
+            var users = _userManager.Users.ToList();
+
+            // Nếu không có người dùng nào
+            if (users == null || !users.Any())
+            {
+                return NotFound("No users found.");
+            }
+
+            // Trả về danh sách người dùng
+            return Ok(users);
         }
 
         private string GenerateJwtToken(IdentityUser user)
