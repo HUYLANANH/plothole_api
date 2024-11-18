@@ -86,7 +86,9 @@ namespace PotholeDetectionApi.Controllers
 
             if (isValid)
             {
-                return Ok(new { Message = "OTP verified successfully." });
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                return Ok(token);
             }
 
             return BadRequest("Invalid OTP or OTP has expired.");
@@ -105,7 +107,7 @@ namespace PotholeDetectionApi.Controllers
             return Ok(otpList);
         }
 
-        /*[HttpPost("reset-password")]
+        [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {
             var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
@@ -114,16 +116,14 @@ namespace PotholeDetectionApi.Controllers
                 return NotFound("User with this email does not exist");
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, decodedToken, resetPasswordDto.NewPassword);
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Code, resetPasswordDto.NewPassword);
             if (result.Succeeded)
             {
                 return Ok("Password has been reset successfully");
             }
 
             return BadRequest(result.Errors);
-        }*/
-
-
+        }
 
         private string GenerateJwtToken(IdentityUser user)
         {
