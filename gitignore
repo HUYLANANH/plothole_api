@@ -1,0 +1,21 @@
+# Ignore bin and obj directories
+/bin/
+/obj/
+
+# Ignore all .dll files in the bin/Release/net8.0/ directory
+bin/Release/net8.0/*.dll
+
+# Ignore files related to build, runtime, and package outputs
+bin/Release/net8.0/runtimes/
+bin/Release/net8.0/*.pdb
+bin/Release/net8.0/*.deps.json
+bin/Release/net8.0/*.cache
+bin/Release/net8.0/*.json
+bin/Release/net8.0/*.dll
+obj/Release/net8.0/*
+
+# Ignore any other temporary or system files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
